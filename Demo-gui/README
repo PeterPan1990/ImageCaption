@@ -1,0 +1,7 @@
+ this folder contain the gui demo script
+	1. the finished demo Demo_tkinter.py, just type: python Demo_tkinter.py, but we suggest the python IDE spyder
+	2. the unfinished demo Demo_wxpython.py, wait to complish
+
+ requires:
+	1. caffe installed
+	2. neural-talk project downloaded, refer to : https://github.com/PeterPan1990
