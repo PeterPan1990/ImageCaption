@@ -20,7 +20,7 @@ def initmodel():
     import caffe
     
     # initiate the caffe model
-    rootdir = '/media/young/225AD7985AD766D7/json/ImageCaption/'
+    rootdir = '/home/young/Desktop/ImageCaption/'
     rootmodel = rootdir + 'python/'
     net = caffe.Net(rootmodel + 'deploy_features.prototxt', \
                     rootmodel + 'VGG_ILSVRC_16_layers.caffemodel')

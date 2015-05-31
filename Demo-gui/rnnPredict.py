@@ -23,7 +23,7 @@ def main(feature):
     import cPickle as pickle
     #from scipy.io import loadmat
     import sys
-    sys.path.append('/media/young/225AD7985AD766D7/json/ImageCaption')
+    sys.path.append('/home/young/Desktop/ImageCaption')
     #sys.path.append('I:\json\neuraltalk-master\imagernn')
     from imagernn.solver import Solver
     from imagernn.imagernn_utils import decodeGenerator, eval_split
@@ -36,14 +36,12 @@ def main(feature):
     # deal with images and predict sentence
     # load the checkpoint
 
-    checkpoint_path_top5 = [r'/media/young/225AD7985AD766D7/json/ImageCaption/model/model_checkpoint_coco_Caicai-PC_baseline_15.97.p', \
-                            r'/media/young/225AD7985AD766D7/json/ImageCaption/model/model_checkpoint_coco_Caicai-PC_baseline_16.71.p', \
-                            r'/media/young/225AD7985AD766D7/json/ImageCaption/model/model_checkpoint_coco_Caicai-PC_baseline_18.47.p', \
-                            r'/media/young/225AD7985AD766D7/json/ImageCaption/model/model_checkpoint_coco_Caicai-PC_baseline_24.56.p', \
-                            r'/media/young/225AD7985AD766D7/json/ImageCaption/model/model_checkpoint_coco_Caicai-PC_baseline_24.64.p']
+    checkpoint_path_top5 = [ r'/home/young/Desktop/ImageCaption/model/model_checkpoint_coco_Caicai-PC_baseline_18.47.p', \
+                            r'/home/young/Desktop/ImageCaption/model/model_checkpoint_coco_Caicai-PC_baseline_24.64.p', \
+                            r'/home/young/Desktop/ImageCaption/model/model_checkpoint_coco_Caicai-PC_baseline_24.56.p']
                             
-    blob_top5 = {} # dict to store the top5 generated sentences
-    for i in range(5):
+    blob_top3 = {} # dict to store the top5 generated sentences
+    for i in range(1):
 
         checkpoint_path = checkpoint_path_top5[i]
         #print 'loading checkpoint %s' % (checkpoint_path, )
@@ -88,9 +86,9 @@ def main(feature):
             img_blob['candidate'] = {'text': candidate, 'logprob': top_prediction[0]}    
             blob['imgblobs'].append(img_blob)
     
-        blob_top5[str(i)] = blob
+        blob_top3[str(i)] = blob
         
-    return blob_top5
+    return blob_top3
     
 if __name__ == '__main__':
     

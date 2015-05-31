@@ -16,6 +16,7 @@ import requests
 
 from getFeature import extractFeature
 from rnnPredict import main
+from getTags import getDetection
 
 class Demo(Frame):
     
@@ -53,7 +54,7 @@ class Demo(Frame):
         #exam_ori1 = PIL.Image.open('example1.jpg')
         #exam_ori1 = exam_ori1.resize((length_exam, length_exam))
         #exam_ori1.save('example1.gif', 'GIF') # convert the jpg file to gif file
-        photo1 = PhotoImage(file='example1.gif')
+        photo1 = PhotoImage(file='1.gif')
         exam_but1 = Button(self, image=photo1, command=self.onButtonEx1)
         exam_but1.image = photo1
         #exam_but1.bind("<Button-1>", onButtonEx1)
@@ -62,7 +63,7 @@ class Demo(Frame):
         #exam_ori2 = PIL.Image.open('example2.jpg')
         #exam_ori2 = exam_ori2.resize((length_exam, length_exam))
         #exam_ori2.save('example2.gif', 'GIF') # convert the jpg file to gif file
-        photo2 = PhotoImage(file='example2.gif')
+        photo2 = PhotoImage(file='2.gif')
         exam_but2 = Button(self, image=photo2, command=self.onButtonEx2)
         exam_but2.image = photo2
         #exam_but2.bind("<Button-1>", onButtonEx2)
@@ -71,7 +72,7 @@ class Demo(Frame):
         #exam_ori3 = PIL.Image.open('example3.jpg')
         #exam_ori3 = exam_ori3.resize((length_exam, length_exam))
         #exam_ori3.save('example3.gif', 'GIF') # convert the jpg file to gif file
-        photo3 = PhotoImage(file='example3.gif')
+        photo3 = PhotoImage(file='3.gif')
         exam_but3 = Button(self, image=photo3, command=self.onButtonEx3)
         exam_but3.image = photo3
         #exam_but3.bind("<Button-1>", onButtonEx3)
@@ -80,7 +81,7 @@ class Demo(Frame):
         #exam_ori4 = PIL.Image.open('example4.jpg')
         #exam_ori4 = exam_ori4.resize((length_exam, length_exam))
         #exam_ori4.save('example4.gif', 'GIF') # convert the jpg file to gif file
-        photo4 = PhotoImage(file='example4.gif')
+        photo4 = PhotoImage(file='4.gif')
         exam_but4 = Button(self, image=photo4, command=self.onButtonEx4)
         exam_but4.image = photo4
         #exam_but4.bind("<Button-1>", onButtonEx4)
@@ -107,20 +108,25 @@ class Demo(Frame):
         result_frame = Frame(self)
         result_frame.grid(row=5, column=3, columnspan=3, padx=80, sticky='nw')
         
-        lbl_gen_but = Button(result_frame, text="Generate Text", command=self.onButtonGEN, bg='green', width=14, font=('Helvetica', 12))
+        lbl_gen_but = Button(result_frame, text="Generate Text", command=self.onButtonGEN, bg='green', width=12, font=('Helvetica', 12))
         #lbl_gen_but.bind("<Button-1>", onButtonGEN)
-        lbl_gen_but.grid(row=0, column=0, columnspan=2, sticky='e')        
+        lbl_gen_but.grid(row=0, column=0, sticky='e')
+        
+        lbl_det_but = Button(result_frame, text="Detect object", command=self.onButtonDET, bg='green', width=12, font=('Helvetica', 12))
+        #lbl_gen_but.bind("<Button-1>", onButtonGEN)
+        lbl_det_but.grid(row=0, column=1, sticky='e')         
         
         lbl_label_tag = Label(result_frame, text="Tags:", font=("Helvetica", 14))
         lbl_label_tag.grid(row=1, column=0, sticky='w')
-        self.lbl_label_detect = Label(result_frame, text="cats, dogs, person, child", font=(12))
-        self.lbl_label_detect.grid(row=1, column=1, padx=10)
+        self.lbl_label_detect = Label(result_frame, text="detected object in the picture", font=(12))
+        self.lbl_label_detect.grid(row=1, column=1, pady=10, sticky='w')
         
-        lbl_label_sen = Label(result_frame, text="Top 5 Generated sentence>", font=("Helvetica", 14))
+        lbl_label_sen = Label(result_frame, text="Generated sentence: ", font=("Helvetica", 14))
         lbl_label_sen.grid(row=2, column=0, columnspan=3, pady=3, sticky='w')
         
-        self.lbl_label_gensen1 = Label(result_frame, text="a dog was running")
-        self.lbl_label_gensen1.grid(row=3, column=0, columnspan=2, padx=5, sticky='w')
+        self.lbl_label_gensen1 = Label(result_frame, text="sentence generate by our model ", font=(10))
+        self.lbl_label_gensen1.grid(row=3, column=0, columnspan=2, padx=5, pady=10,sticky='w')
+        """
         self.lbl_label_gensen2 = Label(result_frame, text="a cat was running")
         self.lbl_label_gensen2.grid(row=4, column=0, columnspan=2, padx=5,sticky='w')
         self.lbl_label_gensen3 = Label(result_frame, text="a person was running")
@@ -129,9 +135,26 @@ class Demo(Frame):
         self.lbl_label_gensen4.grid(row=6, column=0, columnspan=2, padx=5,sticky='w')
         self.lbl_label_gensen5 = Label(result_frame, text="two cats was running")
         self.lbl_label_gensen5.grid(row=7, column=0, columnspan=2, padx=5,sticky='w')
-        
+        """
         # deal with the data
 
+    def onButtonDET(self):
+        from scipy.io import savemat, loadmat
+        import os
+        filename = {'name':self.iamge_path}
+        savemat('/home/young/Desktop/ImageCaption/rcnn-master/examples/filename.mat', filename)
+        getDetection()
+        tags = loadmat('/home/young/Desktop/ImageCaption/rcnn-master/examples/result.mat')
+        #tags = cls
+        tags_dict = tags.get('cls')
+        tags = ""
+        tag_name = tags_dict[0]
+        for i in range(len(tag_name)):
+                tags = tags + str(tag_name[i][0])+", "    
+        self.lbl_label_detect['text'] = tags
+           
+        
+        
     def onImageshow(self, show_path):
         #print 'image show'
         #print self.iamge_path
@@ -169,8 +192,8 @@ class Demo(Frame):
         showimage = PIL.Image.open('url.jpg')
         showimage = showimage.resize((250, 250))
         showimage.save('url.gif', 'GIF') # convert the jpg file to gif file
-        self.iamge_path = out_file
-        self.onImageshow('url.gif')
+        self.iamge_path = os.getcwd()+'/'+out_file
+        self.onImageshow('url.jpg')
             
     def onButtonUL(self):
         #print 'ul'
@@ -178,40 +201,47 @@ class Demo(Frame):
             
     def onButtonEx1(self):
         #print 'ex1'
-        self.iamge_path = 'example1.jpg'
-        self.onImageshow('example1.gif')
+        self.iamge_path = os.getcwd()+'/'+'1.jpg'
+        self.onImageshow('1.jpg')
     
     def onButtonEx2(self):
         #print 'ex2'
-        self.iamge_path = 'example2.jpg'
-        self.onImageshow('example2.gif')
+        self.iamge_path = os.getcwd()+'/'+'2.jpg'
+        self.onImageshow('2.jpg')
         
     def onButtonEx3(self):
         #print 'ex3'
-        self.iamge_path = 'example3.jpg'
-        self.onImageshow('example3.gif')
+        self.iamge_path = os.getcwd()+'/'+'3.jpg'
+        self.onImageshow('3.jpg')
     
     def onButtonEx4(self):
         #print 'ex4'
-        self.iamge_path = 'example4.jpg'
-        self.onImageshow('example4.gif')
+        self.iamge_path = os.getcwd()+'/'+'4.jpg'
+        self.onImageshow('4.jpg')
     
     def onButtonGEN(self):
         #print 'gen'
+        
         feature = extractFeature([self.iamge_path]) # use extractFeature function to get feature
         
         dict_sentence = main(feature) # use main function to get sentence
         
-        self.lbl_label_detect['text'] = 'young' # reset the detected tags
+        #self.lbl_label_detect['text'] = 'young' # reset the detected tags
         
         # set the generated sentence
-        self.lbl_label_gensen1['text'] = dict_sentence.get('4').get('imgblobs')[0].get('candidate').get('text')
-        self.lbl_label_gensen2['text'] = dict_sentence.get('1').get('imgblobs')[0].get('candidate').get('text')
-        self.lbl_label_gensen3['text'] = dict_sentence.get('2').get('imgblobs')[0].get('candidate').get('text')
-        self.lbl_label_gensen4['text'] = dict_sentence.get('3').get('imgblobs')[0].get('candidate').get('text')
-        self.lbl_label_gensen5['text'] = dict_sentence.get('4').get('imgblobs')[0].get('candidate').get('text')        
+        self.lbl_label_gensen1['text'] = dict_sentence.get('0').get('imgblobs')[0].get('candidate').get('text')
+        #self.lbl_label_gensen2['text'] = dict_sentence.get('1').get('imgblobs')[0].get('candidate').get('text')
+        #self.lbl_label_gensen3['text'] = dict_sentence.get('2').get('imgblobs')[0].get('candidate').get('text')
+        #self.lbl_label_gensen4['text'] = dict_sentence.get('3').get('imgblobs')[0].get('candidate').get('text')
+        #self.lbl_label_gensen5['text'] = dict_sentence.get('4').get('imgblobs')[0].get('candidate').get('text')        
         #print self.lbl_label_gensen1['text']
-        print 'Done'
+        self.out()
+        #print 'Done'
+        
+    def out(self):
+        return
+        
+        
 """
 def getfeature(filename):
     feature = getFeature.extractFeature(filename)
